@@ -1,0 +1,31 @@
+{
+  "name": "@hexlet/code",
+  "version": "1.0.0",
+  "description": "Get difference between two files.",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mr-tkachuk/frontend-project-lvl2.git"
+  },
+  "bin": {
+    "gendiff": "bin/gendiff.js"
+  },
+  "author": "mrtkachuk",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mr-tkachuk/frontend-project-lvl2/issues"
+  },
+  "homepage": "https://github.com/mr-tkachuk/frontend-project-lvl2#readme",
+  "dependencies": {
+    "commander": "^9.3.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.18.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.26.0"
+  }
+}
