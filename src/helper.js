@@ -1,18 +1,12 @@
 import { program } from 'commander';
 
-// const helper = program
-// .name('gendiff')
-// .description('Compares two configuration files and shows a difference.')
-// .version('1.0.0');
-
-// helper.parse();
-// export default helper;
-
 program
   .name('gendiff')
   .description('Compares two configuration files and shows a difference.')
-  .version('1.0.0');
-// .option('--first')
+  .version('1.0.0')
+  .argument('<filepath1>')
+  .argument('<filepath2>')
+  .option('-f, --format <type>', 'output format');
 // .option('-s, --separator <char>');
 
 export default program;
