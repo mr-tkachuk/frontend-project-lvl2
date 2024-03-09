@@ -1,48 +1,36 @@
-import path from 'path';
-import fs from 'fs';
 import _ from 'lodash';
-import getParser from './parsers.js'
+import { readFile } from './parsers.js'
+import doFormat from './formatter/index.js'
 
-const getAbsolutePath = (filename) => {
-    const currentDir = process.cwd();
-    return path.resolve(currentDir, filename);
-};
+const diff = (obj1, obj2) => {
+    const keys1 = Object.keys(obj1);
+    const keys2 = Object.keys(obj2);
+    const sortKeys = keys1.concat(keys2).sort();
+    const uniqKeys = _.uniq(sortKeys);
 
-const readFile = (filename) => {
-    const absolutePath = getAbsolutePath(filename);
-    const extension = path.extname(filename);
-    const parser = getParser(extension);
-    const fileData = fs.readFileSync(absolutePath, 'utf-8');
-    return parser(fileData);
-};
+    return uniqKeys.map((key) => {
+        if (_.has(obj1, key) && !_.has(obj2, key)) {
+            return { key, value: obj1[key], status: 'removed' };
+        }
+        if (!_.has(obj1, key) && _.has(obj2, key)) {
+            return { key, value: obj2[key], status: 'added' };
+        }
+        if (_.isObject(obj1[key]) && _.isObject(obj2[key])) {
+            return { key, value: diff(obj1[key], obj2[key]), status: 'nested' };
+        }
+        if (obj1[key] !== obj2[key]) {
+            return { key, oldValue: obj1[key], newValue: obj2[key], status: 'changed', };
+        }
+        return { key, value: obj1[key], status: 'unchanged' };
+    });
+}
 
-const sortAllKeys = (...objects) => {
-    const keys = objects.map(Object.keys);
-    const allKeys = _.union(...keys);
-    return _.sortBy(allKeys);
-};
+const genDiff = (file1, file2, formatter) => {
+    const filesData = [file1, file2].map(readFile);
 
-const getArrayOfDifferences = (obj1, obj2, sortedKeys) => sortedKeys.map((key) => {
-    if (!obj1.hasOwnProperty(key)) {
-        return `  + ${key}: ${obj2[key]}`;
-    }
-    if (!obj2.hasOwnProperty(key)) {
-        return `  - ${key}: ${obj1[key]}`;
-    }
-    if (obj1[key] === obj2[key]) {
-        return `    ${key}: ${obj1[key]}`;
-    }
-    return `  - ${key}: ${obj1[key]}\n  + ${key}: ${obj2[key]}`
-});
+    const tree = diff(...filesData);
 
-const genDiff = (...paths) => {
-    const filesData = paths.map(readFile);
-
-    const allSortedKeys = sortAllKeys(...filesData);
-
-    const result = getArrayOfDifferences(...filesData, allSortedKeys);
-
-    return `{\n${result.join('\n')}\n}`;
+    return doFormat(formatter, tree)
 };
 
 export { genDiff };
