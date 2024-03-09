@@ -5,8 +5,7 @@ import doFormat from './formatter/index.js';
 const diff = (obj1, obj2) => {
   const keys1 = Object.keys(obj1);
   const keys2 = Object.keys(obj2);
-  const sortKeys = keys1.concat(keys2).sort();
-  const uniqKeys = _.uniq(sortKeys);
+  const uniqKeys = _.sortBy(_.uniq([...keys1, ...keys2]));
 
   return uniqKeys.map((key) => {
     if (_.has(obj1, key) && !_.has(obj2, key)) {
