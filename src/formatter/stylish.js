@@ -42,11 +42,7 @@ export default function stylish(tree, indent = '  ') {
                 case 'added':
                     return `${currentIndent}+ ${key}: ${stringify(obj.value, depth, indent)}`;
                 case 'changed':
-                    return `${currentIndent}- ${key}:${
-                        stringify(obj.oldValue, depth, indent) 
-                        ? ` ${stringify(obj.oldValue, depth, indent)}` 
-                        : ''
-                    }\n${currentIndent}+ ${key}: ${stringify(obj.newValue, depth, indent)}`;
+                    return `${currentIndent}- ${key}: ${stringify(obj.oldValue, depth, indent)}\n${currentIndent}+ ${key}: ${stringify(obj.newValue, depth, indent)}`;
                 case 'unchanged':
                     return `${currentIndent}  ${key}: ${stringify(obj.value, depth, indent)}`;
                 default:
