@@ -33,4 +33,4 @@ const genDiff = (file1, file2, formatter) => {
     return doFormat(formatter, tree)
 };
 
-export { genDiff };
+export default genDiff;
