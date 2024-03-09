@@ -1,14 +1,20 @@
 plugins:
-  - jest
+  # https://github.com/babel/eslint-plugin-babel
+  - babel
+
+# https://eslint.org/docs/user-guide/configuring#specifying-environments
 env:
   node: true
-  es2021: true
-extends:
-  - airbnb-base
-  - 'plugin:jest/recommended'
+
+# https://github.com/babel/babel-eslint
+
 parserOptions:
   ecmaVersion: latest
   sourceType: module
+
+extends:
+  - 'airbnb-base'
+
 rules:
   no-console: 0
   import/extensions: 0

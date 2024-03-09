@@ -1,57 +1,58 @@
 import _ from 'lodash';
 
 function stringify(value, currentDepth, indent) {
-    const iter = (currentValue, depth) => {
-        if (!_.isObject(currentValue)) {
-            return `${currentValue}`;
-        }
+  const iter = (currentValue, depth) => {
+    if (!_.isObject(currentValue)) {
+      return `${currentValue}`;
+    }
 
-        const currentIndent = (currentDepth === 1)
-            ? indent.repeat(depth + currentDepth)
-            : indent.repeat(depth + 1);
-        const bracketIndent = (currentDepth === 1)
-            ? indent.repeat(depth - currentDepth)
-            : indent.repeat(depth - 1);
+    const currentIndent = (currentDepth === 1)
+      ? indent.repeat(depth + currentDepth)
+      : indent.repeat(depth + 1);
+    const bracketIndent = (currentDepth === 1)
+      ? indent.repeat(depth - currentDepth)
+      : indent.repeat(depth - 1);
 
-        const lines = Object
-            .entries(currentValue)
-            .map(([key, val]) => `${currentIndent}${key}: ${iter(val, depth + 2)}`);
+    const lines = Object
+      .entries(currentValue)
+      .map(([key, val]) => `${currentIndent}${key}: ${iter(val, depth + 2)}`);
 
-        return [
-            '{',
-            ...lines,
-            `${bracketIndent}}`,
-        ].join('\n');
-    };
+    return [
+      '{',
+      ...lines,
+      `${bracketIndent}}`,
+    ].join('\n');
+  };
 
-    return iter(value, currentDepth + 2);
+  return iter(value, currentDepth + 2);
 }
 
 export default function stylish(tree, indent = '  ') {
-    const iter = (node, depth) => {
-        const currentIndent = indent.repeat(depth);
+  const iter = (node, depth) => {
+    const currentIndent = indent.repeat(depth);
 
-        const result = node.map((obj) => {
-            const { key, value, status } = obj;
+    // eslint-disable-next-line array-callback-return,consistent-return
+    const result = node.map((obj) => {
+      const { key, value, status } = obj;
 
-            switch (status) {
-                case 'nested':
-                    return `${currentIndent}  ${key}: {\n${iter(value, depth + 2)}\n${currentIndent}  }`;
-                case 'removed':
-                    return `${currentIndent}- ${key}: ${stringify(obj.value, depth, indent)}`;
-                case 'added':
-                    return `${currentIndent}+ ${key}: ${stringify(obj.value, depth, indent)}`;
-                case 'changed':
-                    return `${currentIndent}- ${key}: ${stringify(obj.oldValue, depth, indent)}\n${currentIndent}+ ${key}: ${stringify(obj.newValue, depth, indent)}`;
-                case 'unchanged':
-                    return `${currentIndent}  ${key}: ${stringify(obj.value, depth, indent)}`;
-                default:
-                    console.error(`Status "${status}" is unknown`);
-            }
-        });
+      switch (status) {
+        case 'nested':
+          return `${currentIndent}  ${key}: {\n${iter(value, depth + 2)}\n${currentIndent}  }`;
+        case 'removed':
+          return `${currentIndent}- ${key}: ${stringify(obj.value, depth, indent)}`;
+        case 'added':
+          return `${currentIndent}+ ${key}: ${stringify(obj.value, depth, indent)}`;
+        case 'changed':
+          return `${currentIndent}- ${key}: ${stringify(obj.oldValue, depth, indent)}\n${currentIndent}+ ${key}: ${stringify(obj.newValue, depth, indent)}`;
+        case 'unchanged':
+          return `${currentIndent}  ${key}: ${stringify(obj.value, depth, indent)}`;
+        default:
+          console.error(`Status "${status}" is unknown`);
+      }
+    });
 
-        return result.join('\n');
-    };
+    return result.join('\n');
+  };
 
-    return `{\n${iter(tree, 1)}\n}`;
+  return `{\n${iter(tree, 1)}\n}`;
 }
