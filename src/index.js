@@ -25,7 +25,7 @@ const diff = (obj1, obj2) => {
     });
 }
 
-const genDiff = (file1, file2, formatter) => {
+const genDiff = (file1, file2, formatter = 'stylish') => {
     const filesData = [file1, file2].map(readFile);
 
     const tree = diff(...filesData);
